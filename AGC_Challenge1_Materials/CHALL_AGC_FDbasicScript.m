@@ -17,10 +17,11 @@ DetectionSTR = struct();
 % Initialize timer accumulator
 total_time = 0;
 faceDetector = vision.CascadeObjectDetector("FrontalFaceCART");
-faceDetector.MinSize = [90 90];
-faceDetector.MaxSize = [2000 2000];
-faceDetector.MergeThreshold = 10;
-faceDetector.ScaleFactor = 1.07;
+faceDetector.MinSize = [98 98];
+faceDetector.MaxSize = [2500 3000];
+faceDetector.MergeThreshold = 8;
+faceDetector.ScaleFactor = 1.075;
+
 % Process all images in the Training set
 for j = 1 : length( AGC_Challenge1_TRAINING )
     A = imread( sprintf('%s%s',...
