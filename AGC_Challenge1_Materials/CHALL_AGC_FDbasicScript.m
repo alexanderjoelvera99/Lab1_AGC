@@ -1,4 +1,4 @@
-% Basic script for Face Detection Challenge
+ % Basic script for Face Detection Challenge
 % --------------------------------------------------------------------
 % AGC Challenge  
 % Universitat Pompeu Fabra
@@ -50,6 +50,9 @@ for j = 1 : length( AGC_Challenge1_TRAINING )
     end
 
     det_faces = zeros(num_faces);
+    % Al final d'aquest for loop, la variable det_faces tindrà les
+    % coordenades de cadascuna de les boxes que hagi detectat com a cares
+    % (una per fila)
 
     for i = 1:num_faces(1)
         tmp = bbox_v(i,:);
@@ -58,6 +61,44 @@ for j = 1 : length( AGC_Challenge1_TRAINING )
         det_faces(i, :) =  tmp;
 
     end
+
+    %Ordenar el det_faces de box més gran a més petita, i tallar-la a les
+    %dues primeres files
+
+    sizes = zeros(num_faces(1,1));
+    
+    for i = 1:size(sizes)
+        sizes(i) = det_faces(i,3) * det_faces(i,4);
+    end 
+    
+    max_pos = 0;
+    secondmax = 0;
+    for i=1:size(sizes)
+        if sizes(i)>max_pos
+            max_pos = i;
+            sizes(i)=0;
+        end
+    end
+
+    for i=1:size(sizes)
+        if sizes(i)>secondmax && sizes(i) ~= secondmax
+            secondmax = i;
+            sizes(i)=0;
+        end
+    end
+
+    max_pos
+    secondmax
+    
+    if secondmax ~= 0
+        %agafo les files de det_faces amb index max_pos i secondmax
+        det_faces = det_faces(max_pos,:)
+        det_faces(2) = det_faces(secondmax,:)
+    else
+        %agafo només les files de det_faces amb index max_pos
+        det_faces = det_faces(max_pos,:)
+    end
+
     % Update total time
     tt = toc;
     total_time = total_time + tt;
