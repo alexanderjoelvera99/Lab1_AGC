@@ -17,23 +17,23 @@ DetectionSTR = struct();
 % Initialize timer accumulator
 total_time = 0;
 faceDetector = vision.CascadeObjectDetector("FrontalFaceCART");
-faceDetector.MinSize = [98 98];
-faceDetector.MaxSize = [2500 3000];
-faceDetector.MergeThreshold = 8;
-faceDetector.ScaleFactor = 1.075;
+faceDetector.MinSize = [98 100];
+faceDetector.MaxSize = [3500 4000];
+faceDetector.MergeThreshold = 17;
+faceDetector.ScaleFactor = 1.05;
 
 faceDetectorROI = vision.CascadeObjectDetector("FrontalFaceCART");
-faceDetectorROI.MinSize = [98 98];
-faceDetectorROI.MaxSize = [2500 3000];
-faceDetectorROI.MergeThreshold = 8;
-faceDetectorROI.ScaleFactor = 1.075;
+faceDetector.MinSize = [98 100];
+faceDetector.MaxSize = [3500 4000];
+faceDetector.MergeThreshold = 15;
+faceDetector.ScaleFactor = 1.05;
 faceDetectorROI.UseROI = true;
 
 upper_detector = vision.CascadeObjectDetector("UpperBody");
-upper_detector.MinSize = [158 158];
-upper_detector.MaxSize = [4000 4000];
-upper_detector.MergeThreshold = 11;
-upper_detector.ScaleFactor = 1.1;
+upper_detector.MinSize = [150 150];
+upper_detector.MaxSize = [3000 4000];
+upper_detector.MergeThreshold = 19;
+upper_detector.ScaleFactor = 1.3;
 
 % Process all images in the Training set
 for j = 1 : length( AGC_Challenge1_TRAINING )
@@ -54,6 +54,7 @@ for j = 1 : length( AGC_Challenge1_TRAINING )
     
     %det_faces = MyFaceDetectionFunction( A );        
     % ###############################################################
+    %A = im2gray(A);
     bbox_uper = upper_detector(A);
     
     upper_num = size(bbox_uper);
@@ -63,7 +64,6 @@ for j = 1 : length( AGC_Challenge1_TRAINING )
          num_faces = size(bbox_v);
          det_faces = zeros(num_faces);
          if num_faces(1) == 0
-       
                 continue;
          end
          det_faces = [];

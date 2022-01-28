@@ -17,17 +17,23 @@ DetectionSTR = struct();
 % Initialize timer accumulator
 total_time = 0;
 faceDetector = vision.CascadeObjectDetector("FrontalFaceCART");
-faceDetector.MinSize = [98 98];
-faceDetector.MaxSize = [3000 3000];
-faceDetector.MergeThreshold = 9;
-faceDetector.ScaleFactor = 1.075;
-faceDetector.UseROI = true;
+faceDetector.MinSize = [98 100];
+faceDetector.MaxSize = [3500 4000];
+faceDetector.MergeThreshold = 8;
+faceDetector.ScaleFactor = 1.05;
 
-upper_detector = vision.CascadeObjectDetector("FrontalFaceLBP");
-upper_detector.MinSize = [90 90];
-upper_detector.MaxSize = [3000 3000];
-upper_detector.MergeThreshold = 2;
-upper_detector.ScaleFactor = 1.0;
+faceDetectorROI = vision.CascadeObjectDetector("FrontalFaceCART");
+faceDetectorROI.MinSize = [98 108];
+faceDetectorROI.MaxSize = [2500 3000];
+faceDetectorROI.MergeThreshold = 9;
+faceDetectorROI.ScaleFactor = 1.06;
+faceDetectorROI.UseROI = true;
+
+upper_detector = vision.CascadeObjectDetector("UpperBody");
+upper_detector.MinSize = [150 150];
+upper_detector.MaxSize = [3000 4000];
+upper_detector.MergeThreshold = 19;
+upper_detector.ScaleFactor = 1.3;
 
 % Process all images in the Training set
 for j = 1 : length( AGC_Challenge1_TRAINING )
@@ -48,39 +54,43 @@ for j = 1 : length( AGC_Challenge1_TRAINING )
     
     %det_faces = MyFaceDetectionFunction( A );        
     % ###############################################################
+    %A = im2gray(A);
     bbox_uper = upper_detector(A);
-
+    
     upper_num = size(bbox_uper);
 
     if upper_num(1) == 0
-        det_faces = bbox_uper;
-        continue;
-    end
-
-
-    for i = 1:upper_num(1)
-        bbox_v = faceDetector(A, bbox_uper(i, :));
-    
-        num_faces = size(bbox_v);
-    
-        if num_faces(1) == 0
-            continue;
-        end
-    
-        det_faces_temp = zeros(num_faces);
-    
-        for x = 1:num_faces(1)
+         bbox_v = faceDetector(A);
+         num_faces = size(bbox_v);
+         det_faces = zeros(num_faces);
+         if num_faces(1) == 0
+                continue;
+         end
+         det_faces = [];
+         for x = 1:num_faces(1)
             tmp = bbox_v(x,:);
             tmp(3) = tmp(3) + tmp(1);
             tmp(4) = tmp(4) + tmp(2);
-            det_faces_temp(x, :) =  tmp;
+            det_faces = [det_faces ; tmp];
+         end
+    
+         
+    else
+        for i = 1:upper_num(1)
+            bbox_v = faceDetectorROI(A, bbox_uper(i, :));
+        
+            num_faces = size(bbox_v);
+            det_faces = [];
+        
+            if num_faces(1) == 0
+                continue;
+            end
+            
+            tmp = bbox_v(1,:);
+            tmp(3) = tmp(3) + tmp(1);
+            tmp(4) = tmp(4) + tmp(2);
+            det_faces = [det_faces ; tmp];
         end
-
-        det_faces = [det_faces ; det_faces_temp];
-    end
-
-    if size(det_faces(:,1)) == 0
-        continue
     end
     % Update total time
     tt = toc;
