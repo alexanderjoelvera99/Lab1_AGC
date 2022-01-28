@@ -19,14 +19,14 @@ total_time = 0;
 faceDetector = vision.CascadeObjectDetector("FrontalFaceCART");
 faceDetector.MinSize = [98 100];
 faceDetector.MaxSize = [3500 4000];
-faceDetector.MergeThreshold = 8;
+faceDetector.MergeThreshold = 15;
 faceDetector.ScaleFactor = 1.05;
 
 faceDetectorROI = vision.CascadeObjectDetector("FrontalFaceCART");
-faceDetectorROI.MinSize = [98 108];
-faceDetectorROI.MaxSize = [2500 3000];
-faceDetectorROI.MergeThreshold = 9;
-faceDetectorROI.ScaleFactor = 1.06;
+ffaceDetector.MinSize = [98 100];
+faceDetector.MaxSize = [3500 4000];
+faceDetector.MergeThreshold = 15;
+faceDetector.ScaleFactor = 1.05;
 faceDetectorROI.UseROI = true;
 
 upper_detector = vision.CascadeObjectDetector("UpperBody");
