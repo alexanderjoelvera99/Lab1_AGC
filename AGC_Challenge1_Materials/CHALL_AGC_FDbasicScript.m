@@ -17,10 +17,10 @@ DetectionSTR = struct();
 % Initialize timer accumulator
 total_time = 0;
 faceDetector = vision.CascadeObjectDetector("FrontalFaceCART");
-faceDetector.MinSize = [98 98];
-faceDetector.MaxSize = [2500 3000];
-faceDetector.MergeThreshold = 8;
-faceDetector.ScaleFactor = 1.075;
+faceDetector.MinSize = [98 100];
+faceDetector.MaxSize = [3500 4000];
+faceDetector.MergeThreshold = 15;
+faceDetector.ScaleFactor = 1.05;
 
 % Process all images in the Training set
 for j = 1 : length( AGC_Challenge1_TRAINING )
@@ -68,7 +68,7 @@ for j = 1 : length( AGC_Challenge1_TRAINING )
     sizes = zeros(num_faces(1,1));
     
     for i = 1:size(sizes)
-        sizes(i) = det_faces(i,3) * det_faces(i,4);
+        sizes(i) = bbox_v(i,3) * bbox_v(i,4);
     end 
     
     max_pos = 0;
@@ -76,28 +76,26 @@ for j = 1 : length( AGC_Challenge1_TRAINING )
     for i=1:size(sizes)
         if sizes(i)>max_pos
             max_pos = i;
-            sizes(i)=0;
         end
     end
 
     for i=1:size(sizes)
-        if sizes(i)>secondmax && sizes(i) ~= secondmax
+        if sizes(i)>secondmax && sizes(i) ~= sizes(max_pos)
             secondmax = i;
-            sizes(i)=0;
         end
     end
-
-    max_pos
-    secondmax
     
+    det_faces_temp = zeros(2,4);
     if secondmax ~= 0
         %agafo les files de det_faces amb index max_pos i secondmax
-        det_faces = det_faces(max_pos,:)
-        det_faces(2) = det_faces(secondmax,:)
+        det_faces_temp(1,:) = det_faces(max_pos,:);
+        det_faces_temp(2,:) = det_faces(secondmax,:);
     else
         %agafo només les files de det_faces amb index max_pos
-        det_faces = det_faces(max_pos,:)
+        det_faces_temp = det_faces(max_pos,:);
     end
+
+    det_faces = det_faces_temp;
 
     % Update total time
     tt = toc;

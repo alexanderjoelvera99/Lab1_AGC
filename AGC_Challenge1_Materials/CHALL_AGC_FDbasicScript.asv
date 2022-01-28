@@ -1,4 +1,4 @@
-% Basic script for Face Detection Challenge
+ % Basic script for Face Detection Challenge
 % --------------------------------------------------------------------
 % AGC Challenge  
 % Universitat Pompeu Fabra
@@ -17,10 +17,11 @@ DetectionSTR = struct();
 % Initialize timer accumulator
 total_time = 0;
 faceDetector = vision.CascadeObjectDetector("FrontalFaceCART");
-faceDetector.MinSize = [90 90];
-faceDetector.MaxSize = [2000 2000];
-faceDetector.MergeThreshold = 10;
-faceDetector.ScaleFactor = 1.07;
+faceDetector.MinSize = [98 98];
+faceDetector.MaxSize = [2500 3000];
+faceDetector.MergeThreshold = 8;
+faceDetector.ScaleFactor = 1.075;
+
 % Process all images in the Training set
 for j = 1 : length( AGC_Challenge1_TRAINING )
     A = imread( sprintf('%s%s',...
@@ -49,6 +50,9 @@ for j = 1 : length( AGC_Challenge1_TRAINING )
     end
 
     det_faces = zeros(num_faces);
+    % Al final d'aquest for loop, la variable det_faces tindrà les
+    % coordenades de cadascuna de les boxes que hagi detectat com a cares
+    % (una per fila)
 
     for i = 1:num_faces(1)
         tmp = bbox_v(i,:);
@@ -57,6 +61,45 @@ for j = 1 : length( AGC_Challenge1_TRAINING )
         det_faces(i, :) =  tmp;
 
     end
+
+    %Ordenar el det_faces de box més gran a més petita, i tallar-la a les
+    %dues primeres files
+% 
+% %     sizes = zeros(num_faces(1,1));
+% %     
+% %     for i = 1:size(sizes)
+% %         sizes(i) = bbox_v(i,3) * bbox_v(i,4);
+% %     end 
+% %     
+% %     max_pos = 0;
+% %     secondmax = 0;
+% %     for i=1:size(sizes)
+% %         if sizes(i)>max_pos
+% %             max_pos = i;
+% %         end
+% %     end
+% % 
+% %     for i=1:size(sizes)
+% %         if sizes(i)>secondmax && sizes(i) ~= sizes(max_pos)
+% %             secondmax = i;
+% %         end
+% %     end
+% % 
+% %     max_pos
+% %     secondmax
+% %     
+% %     det_faces_temp = zeros(2,4);
+% %     if secondmax ~= 0
+% %         %agafo les files de det_faces amb index max_pos i secondmax
+% %         det_faces_temp(1,:) = det_faces(max_pos,:);
+% %         det_faces_temp(2,:) = det_faces(secondmax,:);
+% %     else
+% %         %agafo només les files de det_faces amb index max_pos
+% %         det_faces_temp = det_faces(max_pos,:);
+% %     end
+% % 
+% %     det_faces = det_faces_temp;
+
     % Update total time
     tt = toc;
     total_time = total_time + tt;
