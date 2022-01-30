@@ -2,7 +2,10 @@
 % --------------------------------------------------------------------
 % AGC Challenge  
 % Universitat Pompeu Fabra
-%
+% Authors
+% Juan Marquerie (192631)
+% Xavier Gallardo (205680)
+% Alexander Vera (206074)
 
 % Load challenge Training data
 load AGC_Challenge1_Training
