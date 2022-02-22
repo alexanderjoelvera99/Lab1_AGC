@@ -51,54 +51,17 @@ for j = 1 : length( AGC_Challenge1_TRAINING )
         det_faces = bbox_v;
         continue;
     end
+    % Process bbox to have x1 y1 w h
+    bbox_v(:, 3) = bbox_v(:, 3) + bbox_v(:, 1);
+    bbox_v(:, 4) = bbox_v(:, 4) + bbox_v(:, 2);
 
-    det_faces = zeros(num_faces);
-    % Al final d'aquest for loop, la variable det_faces tindrà les
-    % coordenades de cadascuna de les boxes que hagi detectat com a cares
-    % (una per fila)
-
-    for i = 1:num_faces(1)
-        tmp = bbox_v(i,:);
-        tmp(3) = tmp(3) + tmp(1);
-        tmp(4) = tmp(4) + tmp(2);
-        det_faces(i, :) =  tmp;
-
-    end
-
-    %Ordenar el det_faces de box més gran a més petita, i tallar-la a les
-    %dues primeres files
-
-    sizes = zeros(num_faces(1,1));
-    
-    for i = 1:size(sizes)
-        sizes(i) = bbox_v(i,3) * bbox_v(i,4);
-    end 
-    
-    max_pos = 0;
-    secondmax = 0;
-    for i=1:size(sizes)
-        if sizes(i)>max_pos
-            max_pos = i;
-        end
-    end
-
-    for i=1:size(sizes)
-        if sizes(i)>secondmax && sizes(i) ~= sizes(max_pos)
-            secondmax = i;
-        end
-    end
-    
-    det_faces_temp = zeros(2,4);
-    if secondmax ~= 0
-        %agafo les files de det_faces amb index max_pos i secondmax
-        det_faces_temp(1,:) = det_faces(max_pos,:);
-        det_faces_temp(2,:) = det_faces(secondmax,:);
+    bbox_v_sorted = sortrows(bbox_v, [3, 4], 'descend'); % sorted by size of the faces
+    % Take only the 2 biggest faces
+    if(num_faces > 2)
+        det_faces = bbox_v_sorted(1:2, :);
     else
-        %agafo només les files de det_faces amb index max_pos
-        det_faces_temp = det_faces(max_pos,:);
-    end
-
-    det_faces = det_faces_temp;
+        det_faces = bbox_v_sorted(:,:);
+    end 
 
     % Update total time
     tt = toc;
